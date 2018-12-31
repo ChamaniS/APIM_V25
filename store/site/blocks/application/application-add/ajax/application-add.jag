@@ -70,14 +70,8 @@ include("/jagg/jagg.jag");
         var tenantDomain = MultitenantUtils.getTenantDomain(user.username);
         var APIUtil = org.wso2.carbon.apimgt.impl.utils.APIUtil;
         var log = new Log();
-        log.error("------------------------" +APIUtil);
         var applicationTierType = org.wso2.carbon.apimgt.impl.APIConstants.TIER_APPLICATION_TYPE;
-       log.error("------------------------" +applicationTierType);
         var applicationTierList = APIUtil.getTiers(applicationTierType, tenantDomain);
-         log.error("-tdomain-----------------------" +tenantDomain);
-         log.error("------------------------" +applicationTierList);
-
-         log.error("Tier------------------------" +tier);
 
         if (!applicationTierList.isEmpty() && applicationTierList.containsKey(tier)) {
             result = mod.addApplication(username, application, tier, callbackUrl, description, groupId,tokenType,applicationAttributes);
