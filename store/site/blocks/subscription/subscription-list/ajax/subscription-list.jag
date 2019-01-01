@@ -196,6 +196,8 @@ include("/jagg/jagg.jag");
         username = user.username;
 
         mod = jagg.module("subscription");
+        
+        var storeMod = jagg.module("manager").getStoreHostObject();
 
         var groupId = session.get("groupId");
         if (jagg.isMultiGroupEnabled()) {
