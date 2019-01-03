@@ -76,6 +76,7 @@
                                <span class="arrow"></span>
                                </a>
 
+
         <ul class="nav nav-pills secondary-nav collapse sub-menu <% if(showAPI || showApplications || showSubscriptions){ %> in <% } %> "
         id="analytics" aria-expanded="true">
             <li>
@@ -137,7 +138,7 @@
                         onclick="jagg.sessionAwareJS({redirect:'<%=allStatsMappedUrl%>?page=api-user-agent-usage&stat=stat<%=urlPrefix%>',e:event,ssoEnabled:<%=ssoEnabled%>})">
                         <%=i18n.localize("API Usage Across Usage Agent")%></a></li>
                 </ul>
-            </li>
+            
 
               <li>
                   <a data-toggle="collapse" data-target="#applications" <% if(!showApplications){ %> class="collapsed" <% } %>>
@@ -155,7 +156,6 @@
                         <%=i18n.localize("Applications Created Over Time")%></a></li>
                   </ul>
               </li>
-
             <li>
                 <a data-toggle="collapse" data-target="#subscriptions" <% if(!showSubscriptions){ %> class="collapsed" <% } %>>
                     <%=i18n.localize("Subscriptions")%>
@@ -178,6 +178,16 @@
             </li>
 		</ul>
 </li>
+
+
+					</li>
+
+					<%if(isPermitted){%>
+					<li <%if(reqUrl.equals(subsMappedUrl) || reqUrl.equals(subsUrl)){ %>class="active"<%} %>><a class="js_toggler" title="<%=i18n.localize("Manage Subscriptions")%>"
+						href="<%=subsMappedUrl%><%=urlPrefix%>"
+						onclick="jagg.sessionAwareJS({redirect:'<%=subsMappedUrl%><%=urlPrefix%>',e:event,ssoEnabled:<%=ssoEnabled%>})"><i class="fw fw-settings fw-2x" title="<%=i18n.localize("Manage Subscriptions")%>" style="font-size:22px;"></i> <%=i18n.localize("Manage Subscriptions")%></a></li>
+					
+					<%}%>
 					<%
 						var APIUtil = org.wso2.carbon.apimgt.impl.utils.APIUtil;
 						var isAnalyticsEnabled = APIUtil.isAnalyticsEnabled();

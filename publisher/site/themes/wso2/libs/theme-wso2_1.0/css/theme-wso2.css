@@ -3234,6 +3234,7 @@ footer a {
 footer a:hover {
   color: #d9edf7 !important;
 }
+
 footer a:visited {
   color: #cbcbcb;
 }
@@ -7702,7 +7703,7 @@ body.inverse .fade-edge:after {
   width: 350px;
   height: 100%;
   overflow-y: auto;
-  background: #222;
+  background: #333;
   color: #ffffff;
   -webkit-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
