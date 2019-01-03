@@ -23,7 +23,7 @@ encode = new encode.Encode();
             print({
                 error:true,
                 message: msg.error.invalidInputs(validation_errors)
-            });        
+            });
     }else if (action == "getApplications") {
         if (!user) {
             if(!ssoEnabled){

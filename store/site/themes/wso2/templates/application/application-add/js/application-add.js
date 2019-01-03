@@ -51,11 +51,7 @@ $(document).ready(function () {
             application:application,
             tier:tier,
             callbackUrl:callbackUrl,
-            description:description,
-            groupId:groupId,
-            tokenType:tokenType,
-            groupId:groupId,
-            applicationAttributes:JSON.stringify(applicationAttributes)
+            description:description
         }, function (result) {
             if (result.error == false) {
                 status=result.status;
@@ -65,7 +61,7 @@ $(document).ready(function () {
                 $.cookie('lastAppName',application,{ expires: date});
                 $.cookie('lastAppStatus',status,{ expires: date});
                 if(goBack == "yes"){
-                    jagg.message({content:i18n.t('Return to API detail page?'),type:'confirm',okCallback:function(){
+                    jagg.message({content:i18n.t('Return back to API detail page?'),type:'confirm',okCallback:function(){
                     window.location.href = apiViewUrl + "?" +  apiPath;
                     },cancelCallback:function(){
                         window.location = jagg.url("/site/pages/application.jag?name=" + application );

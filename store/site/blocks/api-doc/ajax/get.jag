@@ -23,7 +23,9 @@ var log = new Log();
 
     if (uri != null) {
         // replacing @ signs for matcher to work with reverse proxies
-
+        if(callPath.indexOf("@") > -1){
+            callPath = callPath.replace("@","%40");
+        }
         var uriMatcher = new URIMatcher(callPath);
         var providerVal,apiNameVal,apiVersionVal;
         providerVal = apiNameVal = apiVersionVal = "";
@@ -87,6 +89,9 @@ var log = new Log();
     		var registry = carbon.server.osgiService('org.wso2.carbon.registry.core.service.RegistryService').getGovernanceUserRegistry("wso2.anonymous.user", tenantID);
 
     		url = swaggerPath + "swagger.json";
+
+    		    
+
     		var data = registry.get(url);
     	}finally {
     		if (isTenantFlowStarted) {
@@ -109,22 +114,21 @@ var log = new Log();
                 version:apiVersionVal,
                 provider:providerVal
             }, username);
-        var api = result.api;
-        var urlArr = new Array();
+            var api = result.api;
+        var serverURL = api.serverURL;
         var context = api.context;
-        if(gwType == "microGW") {
-            var labels = api.labels;
-            var count = 0;
-            for (var i = 0; i < labels.length; i++) {
-                if ( gwName == labels[i].labelName) {
-                    var accessURLs = labels[i].accessURLs.split(",");
-                    var accessURL = "";
-                    for(var j = 0 ; j < accessURLs.length ; j++){
-                        if(accessURLs[j].indexOf("https://") == 0){
-                            urlArr[count] = accessURLs[j];
-                            break;
-                        }
-                    }
+        var splitVal = JSON.parse(serverURL);
+        var urlArr = new Array();
+        var count = 0;
+        for(var type in splitVal){
+            var environmentsToType = splitVal[type];
+            for(var name in environmentsToType ){
+                var environmentURL;
+                if(envName == name || envName == "undefined" || envName == null){
+                    environmentURL = environmentsToType[name];
+                    urlArr[count] = environmentURL[accessProtocol.replace(":","")];
+                    count++;
+                    break;
                 }
 
             }
@@ -147,30 +151,31 @@ var log = new Log();
             }
         }
 
-        var basePath = api.context;
+        jsonObj.basePath = api.context;
 
         var domains = jagg.module("domains").getDomainMappings(String(tenantDomain)).domains;
     	//populate custom url if exists
         if(domains != null){
             for (var key in domains) {
                 var re = /\/$/g
-                host = domains[key].replace(re, "");
+                jsonObj.host = domains[key].replace(re, "");
                 //remove tenant context
-                basePath = jsonObj.basePath.replace("/t/"+String(tenantDomain),"");
-            }
+                jsonObj.basePath = jsonObj.basePath.replace("/t/"+String(tenantDomain),"");
+            }        
         }
     	else if (urlArr.length > 0 ) { //assign default value to host with first environment address
-            host = urlArr[0].trim().replace(accessProtocol + "//", "");
+    	    jsonObj.host = urlArr[0].trim().replace(accessProtocol+"//","");
     	}
 
         //handle schems IMPORTANT: order of https and http is important to make sure https is targeted first.
-        var schemes = []
+        jsonObj.schemes = []
         if(api.transports.search("https") != -1){
-            schemes.push("https");
+            jsonObj.schemes.push("https");
         }
         if(api.transports.search("http") != -1){
-            schemes.push("http");
+            jsonObj.schemes.push("http");
         }
+
 
         var paths = {}; //fix for /*, {url-template}*
         for (var property in jsonObj.paths) {
@@ -185,11 +190,10 @@ var log = new Log();
 
                 // Remove any * characters that may exist in resource but not the trailing /*
                 var tempResource = property.replace("*","");
-                if (isEndsWithSlashStar) {
+                if(tempResource.lastIndexOf("/")==(tempResource.length-1)){
                    tempResource += "*";
                 }
-                paths[tempResource] = jsonObj.paths[property];
-            }
+            paths[tempResource] = jsonObj.paths[property];            }
         }
 
         if (jsonObj.openapi) {
