@@ -4,19 +4,14 @@ function triggerSubscribe(deploymentType) {
     $.ajaxSetup({
         contentType: "application/x-www-form-urlencoded; charset=utf-8"
     });
-    jagg.sessionAwareJS({
-        redirect: '/site/pages/index.jag'
-    });
+    jagg.sessionAwareJS({redirect:'/site/pages/index.jag'});
     if (!jagg.loggedIn) {
         return;
     }
     var applicationId = $("#application-list").val();
     var applicationName = $("#application-list option:selected").text();
     if (applicationId == "-" || applicationId == "createNewApp") {
-        jagg.message({
-            content: i18n.t('Please select an application before subscribing'),
-            type: "info"
-        });
+        jagg.message({content:i18n.t('Please select an application before subscribing'),type:"info"});
         return;
     }
     var api = jagg.api;
@@ -41,12 +36,12 @@ function triggerSubscribe(deploymentType) {
 
 
     jagg.post("/site/blocks/subscription/subscription-add/ajax/subscription-add.jag", {
-        action: "addSubscription",
-        applicationId: applicationId,
-        name: api.name,
-        version: api.version,
-        provider: api.provider,
-        tier: tier,
+        action:"addSubscription",
+        applicationId:applicationId,
+        name:api.name,
+        version:api.version,
+        provider:api.provider,
+        tier:tier,
         tenant: jagg.site.tenant
     }, function(result) {
 
@@ -83,7 +78,7 @@ function triggerSubscribe(deploymentType) {
         $("#subscribe-button").html('Subscribe');
         $("#subscribe-button").removeAttr('disabled');
         if (result.error == false) {
-            if (result.status.subscriptionStatus == 'REJECTED') {
+            if(result.status.subscriptionStatus == 'REJECTED')    {
                 $('#messageModal').html($('#confirmation-data').html());
                 $('#messageModal h3.modal-title').html(i18n.t('Subscription Rejected'));
                 $('#messageModal div.modal-body').html('\n\n' + i18n.t('Your subscription has been rejected, since it does not satisfy the authentication requirements. Please contact the API publisher for more information.'));
@@ -93,21 +88,17 @@ function triggerSubscribe(deploymentType) {
                 });
             } else {
                 var jsonPayload = result.status.workflowResponse.jsonPayload;
-                if (jsonPayload != null && jsonPayload != "") {
-                    var jsonObj = JSON.parse(jsonPayload);
-                    var additionalParameters = jsonObj.additionalParameters;
-                    //add another condition to prevent unnecessary redirection
-                    if (jsonObj.redirectUrl != null) {
-                        if (jsonObj.redirectConfirmationMsg == null) {
-                            if (additionalParameters != null && Object.keys(additionalParameters).length > 0) {
-                                var params = "";
-                                for (var key in additionalParameters) {
-                                    if (params != "") {
-                                        params = params.concat("&");
-                                    }
-                                    if (additionalParameters.hasOwnProperty(key)) {
-                                        params = params.concat((key.concat("=")).concat(additionalParameters[key]));
-                                    }
+                if(jsonPayload != null && jsonPayload != ""){
+                   var jsonObj = JSON.parse(jsonPayload);
+                   var additionalParameters = jsonObj.additionalParameters; 
+                       //add another condition to prevent unnecessary redirection
+		   if (jsonObj.redirectUrl != null) {
+		      if(jsonObj.redirectConfirmationMsg == null){
+                   if(additionalParameters != null && Object.keys(additionalParameters).length > 0) {
+                              var params = "";
+                              for (var key in additionalParameters) {
+                                if(params != ""){
+                                  params = params.concat("&");
                                 }
                                 if (additionalParameters.hasOwnProperty(key)) {
                                   params = params.concat((key.concat("=")).concat(additionalParameters[key]));
